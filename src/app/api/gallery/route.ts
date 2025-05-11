@@ -99,76 +99,26 @@ async function getImagesFromGoogleDrive(): Promise<GalleryImage[]> {
   }
 }
 
-// Get images from a specific Google Photos album
-async function getImagesFromAlbum(accessToken: string, albumId: string): Promise<GalleryImage[]> {
-  const url = `https://photoslibrary.googleapis.com/v1/mediaItems:search`;
-  
-  const response = await fetch(url, {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${accessToken}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      albumId: albumId,
-      pageSize: 100,
-    }),
-  });
-  
-  if (!response.ok) {
-    console.error(`Failed to get album images: ${response.status} ${response.statusText}`);
-    const errorData = await response.text();
-    console.error('Error response:', errorData);
-    throw new Error(`Failed to get album images: ${response.statusText}`);
-  }
-  
-  const data = await response.json();
-  return mapMediaItemsToGalleryImages(data.mediaItems || []);
-}
-
-// Get recent images from Google Photos library
-async function getRecentImages(accessToken: string): Promise<GalleryImage[]> {
-  const url = `https://photoslibrary.googleapis.com/v1/mediaItems?pageSize=30`;
-  
-  const response = await fetch(url, {
-    headers: {
-      'Authorization': `Bearer ${accessToken}`,
-      'Content-Type': 'application/json',
-    },
-  });
-  
-  if (!response.ok) {
-    console.error(`Failed to get recent images: ${response.status} ${response.statusText}`);
-    const errorData = await response.text();
-    console.error('Error response:', errorData);
-    throw new Error(`Failed to get recent images: ${response.statusText}`);
-  }
-  
-  const data = await response.json();
-  return mapMediaItemsToGalleryImages(data.mediaItems || []);
-}
-
 // Map Google Photos media items to our gallery format
-function mapMediaItemsToGalleryImages(mediaItems: any[]): GalleryImage[] {
+function mapMediaItemsToGalleryImages(mediaItems: Record<string, unknown>[]): GalleryImage[] {
   return mediaItems
-    .filter(item => item.mimeType && item.mimeType.startsWith('image/'))
+    .filter(item => typeof item.mimeType === 'string' && item.mimeType.startsWith('image/'))
     .map(item => ({
-      id: item.id,
-      src: `${item.baseUrl}=w2048-h2048`, // Large size for display
-      alt: item.filename || 'Gallery image',
-      title: item.filename?.replace(/\.[^/.]+$/, '') || 'Untitled', // Remove file extension
-      thumbnail: `${item.baseUrl}=w300-h300`, // Thumbnail
+      id: item.id as string,
+      src: `${item.baseUrl}=w2048-h2048` as string, // Large size for display
+      alt: (item.filename as string) || 'Gallery image',
+      title: ((item.filename as string) || 'Untitled').replace(/\.[^/.]+$/, '') || 'Untitled', // Remove file extension
+      thumbnail: `${item.baseUrl}=w300-h300` as string, // Thumbnail
     }));
 }
 
-export async function GET(req: Request) {
+export async function GET() {
   try {
     // First try to get images from Google Drive (using the folder ID from .env.local)
-    let images = await getImagesFromGoogleDrive();
+    const images = await getImagesFromGoogleDrive();
     
-
     if (images.length === 0) {
-      console.log('No images found in Google Drive or Google Photos. Please check your folder ID and permissions.');
+      console.log('No images found in Google Drive. Please check your folder ID and permissions.');
     } else {
       console.log(`Returning ${images.length} images to the gallery`);
     }
