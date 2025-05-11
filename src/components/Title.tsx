@@ -4,21 +4,11 @@ import { useEffect, useRef, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { gsap } from 'gsap';
 import { useMediaQuery } from '../hooks/useMediaQuery';
-import { useScrollReveal } from '../hooks/useScrollReveal';
 
 export default function Title() {
   const containerRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLHeadingElement>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
   const isMobile = useMediaQuery('(max-width: 768px)');
-  
-  // Use scroll reveal for the content section
-  const isContentVisible = useScrollReveal(contentRef, {
-    threshold: 0.1,
-    onEnter: () => {
-      console.log('Content has entered the viewport');
-    }
-  });
   
   useEffect(() => {
     if (!containerRef.current || !textRef.current) return;
@@ -115,17 +105,15 @@ export default function Title() {
       
       {/* Main content */}
       <motion.div
-        ref={contentRef}
-        className="z-10 text-center px-4"
+        className="z-10 text-center px-4 content-section"
         initial={{ y: 50, opacity: 0 }}
-        animate={{ 
-          y: isContentVisible ? 0 : 50,
-          opacity: isContentVisible ? 1 : 0 
-        }}
+        whileInView={{ y: 0, opacity: 1 }}
+        viewport={{ once: true, amount: 0.1, margin: "0px 0px -100px 0px" }}
         transition={{ 
           type: "spring", 
           stiffness: 100, 
-          damping: 15
+          damping: 15,
+          onComplete: () => console.log('Content has entered the viewport')
         }}
       >
         <motion.h1 
