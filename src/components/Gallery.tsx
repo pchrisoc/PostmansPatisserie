@@ -180,7 +180,7 @@ export default function Gallery() {
           <motion.div 
             key={img.id} 
             className="overflow-hidden rounded-2xl shadow-lg bg-transparent cursor-pointer"
-            onClick={() => openImage(img.src, index)}
+            onClick={() => openImage(img.src || '', index)}
             variants={{
               hidden: { opacity: 0, y: 20 },
               show: { opacity: 1, y: 0 }
@@ -196,11 +196,11 @@ export default function Gallery() {
           >
             <div className="relative w-full aspect-[3/4] group">
               <Image 
-                src={img.src || img.thumbnail}
-                alt={img.alt}
+                src={(img.src || img.src || '')} 
+                alt={img.alt || 'Gallery image'}
                 fill
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
-                className="object-cover transition-all duration-500 grayscale hover:grayscale-0 rounded-2xl"
+                className="object-cover transition-all duration-500 ale rounded-2xl"
                 loading="lazy"
               />
               <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 rounded-b-2xl">
