@@ -6,8 +6,6 @@ import { useMediaQuery } from '../hooks/useMediaQuery';
 
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  const isMobile = useMediaQuery('(max-width: 768px)');
   
   const navItems = [
     { name: 'HOME', path: '#' },
