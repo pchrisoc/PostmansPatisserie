@@ -9,6 +9,7 @@ export default function Navigation() {
   const navItems = [
     { name: 'HOME', path: '#' },
     { name: 'ABOUT', path: '#about' },
+    { name: 'GALLERY', path: '#gallery' },
   ];
   
   // Handle scroll events to change navigation appearance
