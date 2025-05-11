@@ -10,7 +10,8 @@ declare module 'exif-parser' {
     GPSLatitude?: number;
     GPSLongitude?: number;
     GPSAltitude?: number;
-    [key: string]: any;
+    // Use unknown instead of any to be more type-safe
+    [key: string]: unknown;
   }
 
   interface ExifResult {

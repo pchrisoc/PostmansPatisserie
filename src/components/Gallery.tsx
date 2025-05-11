@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import Image from 'next/image';
 
 interface GalleryImage {
   src: string;
@@ -194,10 +195,12 @@ export default function Gallery() {
             }}
           >
             <div className="relative w-full aspect-[3/4] group">
-              <img 
+              <Image 
                 src={img.src || img.thumbnail}
                 alt={img.alt}
-                className="w-full h-full object-cover transition-all duration-500 rounded-2xl"
+                fill
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
+                className="object-cover transition-all duration-500 grayscale hover:grayscale-0 rounded-2xl"
                 loading="lazy"
               />
               <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 rounded-b-2xl">
@@ -237,11 +240,17 @@ export default function Gallery() {
               transition={{ type: "spring", damping: 25 }}
               onClick={(e) => e.stopPropagation()}
             >
-              <img 
-                src={selectedImage}
-                alt="Enlarged view"
-                className="max-w-full max-h-[85vh] object-contain rounded-3xl"
-              />
+              <div className="relative w-full h-[85vh] max-w-[85vw]">
+                <Image 
+                  src={selectedImage}
+                  alt="Enlarged view"
+                  fill
+                  className="object-contain rounded-3xl"
+                  sizes="85vw"
+                  priority
+                  unoptimized={true} // Ensuring we get the full quality image in the modal
+                />
+              </div>
               
               {/* Navigation buttons */}
               <motion.button 
