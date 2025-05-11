@@ -159,10 +159,6 @@ export default function Gallery() {
 
   return (
     <div className="container mx-auto px-4 py-16">
-      <div className="mb-6">
-        <h2 className="text-2xl font-bold mb-2">Gallery</h2>
-        <p className="text-gray-600">Images are sorted by date taken (newest first)</p>
-      </div>
       
       {/* Image Grid - Using responsive grid with preserved aspect ratios */}
       <motion.div 
