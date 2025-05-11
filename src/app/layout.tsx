@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ZYMO.ME | Futuristic Digital Experience",
+  title: "ZYMO.ME | Celiac's Refuge",
   description: "A sleek, futuristic website with cutting-edge animations and visuals",
   keywords: "futuristic, animation, digital experience, black and white, sleek design",
 };
