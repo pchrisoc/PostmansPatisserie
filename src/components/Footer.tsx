@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 
 export default function Footer() {
   return (
@@ -20,9 +21,9 @@ export default function Footer() {
             <div className="transform transition-transform duration-300 hover:translate-y-[-5px] text-right">
             <h3 className="text-xl font-bold mb-4 relative inline-block after:content-[''] after:absolute after:w-0 after:h-0.5 after:bg-amber-500 after:right-0 after:bottom-0 hover:after:w-full after:transition-all after:duration-300">Quick Links</h3>
             <ul className="space-y-2">
-              <li><a href="/#about" className="hover:text-amber-600 transition-colors relative inline-block after:content-[''] after:absolute after:w-0 after:h-0.5 after:bg-amber-400 after:right-0 after:bottom-0 hover:after:w-full after:transition-all after:duration-300">About Us</a></li>
-              <li><a href="/#gallery" className="hover:text-amber-600 transition-colors relative inline-block after:content-[''] after:absolute after:w-0 after:h-0.5 after:bg-amber-400 after:right-0 after:bottom-0 hover:after:w-full after:transition-all after:duration-300">Our Gallery</a></li>
-              <li><a href="/#order" className="hover:text-amber-600 transition-colors relative inline-block after:content-[''] after:absolute after:w-0 after:h-0.5 after:bg-amber-400 after:right-0 after:bottom-0 hover:after:w-full after:transition-all after:duration-300">Order</a></li>
+              <li><Link href="/#about" className="hover:text-amber-600 transition-colors relative inline-block after:content-[''] after:absolute after:w-0 after:h-0.5 after:bg-amber-400 after:right-0 after:bottom-0 hover:after:w-full after:transition-all after:duration-300">About Us</Link></li>
+              <li><Link href="/#gallery" className="hover:text-amber-600 transition-colors relative inline-block after:content-[''] after:absolute after:w-0 after:h-0.5 after:bg-amber-400 after:right-0 after:bottom-0 hover:after:w-full after:transition-all after:duration-300">Our Gallery</Link></li>
+              <li><Link href="/#order" className="hover:text-amber-600 transition-colors relative inline-block after:content-[''] after:absolute after:w-0 after:h-0.5 after:bg-amber-400 after:right-0 after:bottom-0 hover:after:w-full after:transition-all after:duration-300">Order</Link></li>
             </ul>
             </div>
         </div>
