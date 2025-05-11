@@ -1,5 +1,6 @@
 import { google } from 'googleapis';
 import { NextResponse } from 'next/server';
+import { sheets_v4 } from 'googleapis';
 
 // Define interface for order data
 interface OrderData {
@@ -27,7 +28,7 @@ const getAuthClient = () => {
 };
 
 // Function to ensure the Orders sheet exists
-async function ensureOrdersSheetExists(sheets: any, spreadsheetId: string) {
+async function ensureOrdersSheetExists(sheets: sheets_v4.Sheets, spreadsheetId: string) {
   try {
     // Get information about the spreadsheet
     const spreadsheet = await sheets.spreadsheets.get({
@@ -36,7 +37,7 @@ async function ensureOrdersSheetExists(sheets: any, spreadsheetId: string) {
 
     // Check if the Orders sheet already exists
     const ordersSheetExists = spreadsheet.data.sheets.some(
-      (sheet: any) => sheet.properties.title === 'Orders'
+      (sheet: sheets_v4.Schema$Sheet) => sheet.properties.title === 'Orders'
     );
 
     if (!ordersSheetExists) {
