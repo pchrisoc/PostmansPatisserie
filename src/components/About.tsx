@@ -39,16 +39,7 @@ export default function About() {
             viewport={{ once: true }}
           />
         ))}
-        {Array.from({ length: 12 }).map((_, i) => (
-          <motion.div 
-            key={`h-${i}`}
-            className="col-span-full row-span-1 border-b border-white/10"
-            initial={{ width: 0 }}
-            whileInView={{ width: "100%" }}
-            transition={{ duration: 1.5, delay: i * 0.1 }}
-            viewport={{ once: true }}
-          />
-        ))}
+
       </div>
       
       {/* Parallax content - Dictionary definition */}
