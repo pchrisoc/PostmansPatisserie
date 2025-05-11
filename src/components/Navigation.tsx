@@ -1,8 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useMediaQuery } from '../hooks/useMediaQuery';
 
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
@@ -13,15 +12,7 @@ export default function Navigation() {
   ];
   
   // Handle scroll events to change navigation appearance
-  useEffect(() => {
-    const handleScroll = () => {
-      const isScrolled = window.scrollY > 50;
-      setScrolled(isScrolled);
-    };
-    
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  // Removed unused scroll effect
   
   const menuVariants = {
     closed: {

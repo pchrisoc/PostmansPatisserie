@@ -75,7 +75,7 @@ export default function CursorTrail() {
     
     previousTimeRef.current = time;
     requestRef.current = requestAnimationFrame(animate);
-  }, [mousePosition, isMoving, cursorHistory.length, historyLimit]);
+  }, [mousePosition, isMoving, cursorHistory, historyLimit]);
   
   useEffect(() => {
     requestRef.current = requestAnimationFrame(animate);
