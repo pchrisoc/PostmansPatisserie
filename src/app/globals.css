@@ -1,8 +1,43 @@
 @import "tailwindcss";
 
 :root {
-  --background: #000000;
-  --foreground: #ffffff;
+  --background: #fff5e0;
+  --foreground: #4b3621;
+  --primary: #d97706;
+  --secondary: #f59e0b;
+  --accent: #fbbf24;
+}
+
+/* Animation keyframes */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+  from { transform: translateX(-10px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+@keyframes floatAnimation {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes gradientFlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
 @keyframes glitch {
@@ -74,7 +109,7 @@ body {
   overflow-x: hidden;
 }
 
-/* Add a subtle scanline effect to the entire page */
+/* Subtle animated background pattern */
 body::before {
   content: "";
   position: fixed;
@@ -82,16 +117,11 @@ body::before {
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    to bottom,
-    transparent 50%,
-    rgba(255, 255, 255, 0.03) 50%
-  );
-  background-size: 100% 4px;
+  background: 
+    radial-gradient(circle at 25% 25%, rgba(251, 191, 36, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 75% 75%, rgba(217, 119, 6, 0.05) 0%, transparent 50%);
   pointer-events: none;
-  z-index: 100;
-  animation: scanlines 8s linear infinite;
-  opacity: 0.3;
+  z-index: -1;
 }
 
 /* Add a subtle noise effect to the entire page */
@@ -109,14 +139,106 @@ body::after {
   animation: noise 8s steps(1) infinite;
 }
 
-.glitch-text {
-  position: relative;
-  animation: glitch 500ms infinite;
-  animation-play-state: paused;
+/* Animated elements */
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out forwards;
 }
 
-.glitch-text:hover {
-  animation-play-state: running;
+.animate-slide-in {
+  animation: slideIn 0.4s ease-out forwards;
+}
+
+.animate-bounce {
+  animation: bounce 2s infinite;
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-float {
+  animation: floatAnimation 6s ease-in-out infinite;
+}
+
+/* Hover animations */
+.hover-lift {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.hover-scale {
+  transition: transform 0.3s ease;
+}
+
+.hover-scale:hover {
+  transform: scale(1.05);
+}
+
+/* Page transitions */
+.page-transition {
+  transition: opacity 0.3s, transform 0.3s;
+}
+
+.page-transition-enter {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.page-transition-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.page-transition-exit {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.page-transition-exit-active {
+  opacity: 0;
+  transform: translateY(-20px);
+}
+
+/* Gradient backgrounds */
+.gradient-bg {
+  background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
+  background-size: 200% 200%;
+  animation: gradientFlow 15s ease infinite;
+}
+
+.gradient-text {
+  background: linear-gradient(90deg, #d97706, #ea580c);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-fill-color: transparent;
+}
+
+/* Button styles */
+.button-modern {
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.button-modern::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+}
+
+.button-modern:hover::after {
+  transform: translateX(0);
 }
 
 /* Customized scrollbar */
@@ -125,22 +247,23 @@ body::after {
 }
 
 ::-webkit-scrollbar-track {
-  background: #111;
+  background: #f3e8d6;
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(217, 119, 6, 0.5);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(217, 119, 6, 0.7);
 }
 
 /* Futuristic focus styles for form elements */
 input:focus, textarea:focus, button:focus {
   outline: none;
-  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 0 2px rgba(217, 119, 6, 0.5);
 }
 
 /* Add a glowing effect to buttons on hover */
@@ -150,8 +273,18 @@ button:hover {
 
 /* Selection styling */
 ::selection {
-  background: rgba(255, 255, 255, 0.2);
-  color: white;
+  background: rgba(217, 119, 6, 0.3);
+  color: #4b3621;
+}
+
+/* Card effects */
+.card-hover {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
 }
 
 /* Text gradient effect */
@@ -161,4 +294,14 @@ button:hover {
   background-clip: text;
   -webkit-text-fill-color: transparent;
   text-fill-color: transparent;
+}
+
+.glitch-text {
+  position: relative;
+  animation: glitch 500ms infinite;
+  animation-play-state: paused;
+}
+
+.glitch-text:hover {
+  animation-play-state: running;
 }
