@@ -11,7 +11,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="transform transition-transform duration-300 hover:translate-y-[-5px]">
             <h3 className="text-2xl font-bold mb-4 relative inline-block after:content-[''] after:absolute after:w-0 after:h-0.5 after:bg-amber-500 after:left-0 after:bottom-0 hover:after:w-full after:transition-all after:duration-300">Postman Patisserie</h3>
-            <p className="mb-2 hover:text-amber-700 transition-colors">kraffian@berkeley.edu</p>
+            <p className="mb-2 hover:text-amber-700 transition-colors">krafian@berkeley.edu</p>
             <p className="mb-2 hover:text-amber-700 transition-colors">(805) 295-0593</p>
           </div>
             <div className="transform transition-transform duration-300 hover:translate-y-[-5px]">
