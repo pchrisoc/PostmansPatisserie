@@ -36,9 +36,9 @@ async function ensureOrdersSheetExists(sheets: sheets_v4.Sheets, spreadsheetId: 
     });
 
     // Check if the Orders sheet already exists
-    const ordersSheetExists = spreadsheet.data.sheets.some(
-      (sheet: sheets_v4.Schema$Sheet) => sheet.properties.title === 'Orders'
-    );
+    const ordersSheetExists = spreadsheet.data.sheets?.some(
+      (sheet: sheets_v4.Schema$Sheet) => sheet.properties?.title === 'Orders'
+    ) || false;
 
     if (!ordersSheetExists) {
       // Create a new sheet called "Orders"
