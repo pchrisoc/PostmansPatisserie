@@ -1,15 +1,29 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useMediaQuery } from '../hooks/useMediaQuery';
 
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const isMobile = useMediaQuery('(max-width: 768px)');
   
   const navItems = [
     { name: 'HOME', path: '#' },
     { name: 'ABOUT', path: '#about' },
   ];
+  
+  // Handle scroll events to change navigation appearance
+  useEffect(() => {
+    const handleScroll = () => {
+      const isScrolled = window.scrollY > 50;
+      setScrolled(isScrolled);
+    };
+    
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
   
   const menuVariants = {
     closed: {
@@ -39,17 +53,17 @@ export default function Navigation() {
     <>
       {/* Navigation bar */}
       <motion.nav 
-        className="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-8 py-6"
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        transition={{ 
-          type: "spring", 
-          stiffness: 100, 
-          delay: 0.5 
-        }}
-      >
+        className={`fixed top-0 left-0 w-full z-50 flex justify-between items-center px-4 md:px-8 py-4 md:py-6 transition-colors duration-300`}
+          initial={{ y: -100 }}
+          animate={{ y: 0 }}
+          transition={{ 
+            type: "spring", 
+            stiffness: 100, 
+            delay: 0.5 
+          }}
+        >
         <motion.div 
-          className="text-2xl font-bold tracking-wider"
+          className="text-xl md:text-2xl font-bold tracking-wider"
           whileHover={{ scale: 1.05 }}
         >
           ZYMO.ME
@@ -57,23 +71,23 @@ export default function Navigation() {
         
         <motion.button
           onClick={() => setIsOpen(!isOpen)}
-          className="w-12 h-12 flex flex-col justify-center items-center gap-1.5 z-50"
+          className="w-10 h-10 md:w-12 md:h-12 flex flex-col justify-center items-center gap-1.5 z-50"
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
         >
           <motion.span 
-            className="w-8 h-0.5 bg-white block"
+            className="w-6 md:w-8 h-0.5 bg-white block"
             animate={{ 
               rotate: isOpen ? 45 : 0,
               y: isOpen ? 8 : 0
             }}
           />
           <motion.span 
-            className="w-8 h-0.5 bg-white block"
+            className="w-6 md:w-8 h-0.5 bg-white block"
             animate={{ opacity: isOpen ? 0 : 1 }}
           />
           <motion.span 
-            className="w-8 h-0.5 bg-white block"
+            className="w-6 md:w-8 h-0.5 bg-white block"
             animate={{ 
               rotate: isOpen ? -45 : 0,
               y: isOpen ? -8 : 0
@@ -92,7 +106,7 @@ export default function Navigation() {
             exit="closed"
             variants={menuVariants}
           >
-            <motion.ul className="flex flex-col gap-8 text-center">
+            <motion.ul className="flex flex-col gap-6 md:gap-8 text-center">
               {navItems.map((item) => (
                 <motion.li 
                   key={item.name}
@@ -101,7 +115,7 @@ export default function Navigation() {
                 >
                   <a 
                     href={item.path} 
-                    className="text-4xl font-bold tracking-widest hover:text-gray-300 transition-colors"
+                    className="text-2xl md:text-4xl font-bold tracking-widest hover:text-gray-300 transition-colors"
                     onClick={() => setIsOpen(false)}
                   >
                     {item.name}
