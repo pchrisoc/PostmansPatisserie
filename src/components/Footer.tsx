@@ -1,51 +1,34 @@
-'use client';
-
-import { motion } from 'framer-motion';
+import React from 'react';
 
 export default function Footer() {
-  const currentYear = new Date().getFullYear();
-  
   return (
-    <footer className="relative py-16 overflow-hidden">
-      {/* Animated lines */}
-      <div className="absolute inset-0 flex justify-between -z-10 opacity-30">
-        {Array.from({ length: 10 }).map((_, i) => (
-          <motion.div
-            key={i}
-            className="w-px bg-gradient-to-b from-transparent via-white to-transparent h-full"
-            initial={{ height: 0 }}
-            whileInView={{ height: '100%' }}
-            transition={{ duration: 1.5, delay: i * 0.1 }}
-            viewport={{ once: true }}
-          />
-        ))}
-      </div>
-      
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-16">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-          >
-            <h3 className="text-2xl font-bold mb-6">ZYMO.ME</h3>
-            <p className="text-gray-400 max-w-xs">
-              Pushing the boundaries of gluten-free tolerance in a world of focaccia.
-            </p>
-          </motion.div>
-          
+    <footer className="bg-amber-900 text-amber-50 py-8 px-4 md:px-8 mt-auto">
+      <div className="container mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div>
+            <h3 className="text-xl font-bold mb-4">Postman Patisserie</h3>
+            <p className="mb-2">123 Bakery Lane</p>
+            <p className="mb-2">Flourville, BR34D</p>
+            <p className="mb-2">Tel: (555) 123-4567</p>
+          </div>
+          <div>
+            <h3 className="text-xl font-bold mb-4">Hours</h3>
+            <p className="mb-2">Monday - Friday: 7am - 6pm</p>
+            <p className="mb-2">Saturday: 8am - 5pm</p>
+            <p className="mb-2">Sunday: 8am - 2pm</p>
+          </div>
+          <div>
+            <h3 className="text-xl font-bold mb-4">Connect</h3>
+            <div className="flex gap-4">
+              <a href="#" className="text-amber-50 hover:text-amber-200 transition-colors">Instagram</a>
+              <a href="#" className="text-amber-50 hover:text-amber-200 transition-colors">Facebook</a>
+              <a href="#" className="text-amber-50 hover:text-amber-200 transition-colors">Twitter</a>
+            </div>
+          </div>
         </div>
-        
-        <motion.div 
-          className="pt-8 border-t border-white/10 text-center text-gray-500 text-sm"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 0.6 }}
-          viewport={{ once: true }}
-        >
-          <p>© {currentYear} ZYMO.ME. All rights reserved.</p>
-        </motion.div>
+        <div className="border-t border-amber-800 mt-8 pt-8 text-center">
+          <p>&copy; {new Date().getFullYear()} Postman Patisserie. All rights reserved.</p>
+        </div>
       </div>
     </footer>
   );

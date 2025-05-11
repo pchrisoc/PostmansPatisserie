@@ -74,7 +74,7 @@ async function getImagesFromGoogleDrive(): Promise<GalleryImage[]> {
     const drive = google.drive({ version: 'v3', auth });
     
     // Get the folder ID from .env.local
-    const folderId = process.env.GOOGLE__DRIVE_FOLDER_ID;
+    const folderId = process.env.GOOGLE_DRIVE_FOLDER_ID;
     
     if (!folderId) {
       console.error('No Google Drive folder ID specified in environment variables');

@@ -13,9 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ZYMO.ME | Celiac's Refuge",
-  description: "A sleek, futuristic website with cutting-edge animations and visuals",
-  keywords: "futuristic, animation, digital experience, black and white, sleek design",
+  title: "PostmanPatisserie | Artisanal Bread",
+  description: "Fresh artisanal bread delivered to your doorstep. Order our handcrafted breads made with premium ingredients.",
+  keywords: "bread, patisserie, artisanal, handcrafted, organic, delivery, order bread, freshly baked",
 };
 
 export default function RootLayout({
@@ -26,7 +26,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-amber-50 text-stone-800`}
       >
         {children}
       </body>
