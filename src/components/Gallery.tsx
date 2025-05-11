@@ -9,6 +9,8 @@ interface GalleryImage {
   id: string;
   title?: string;
   thumbnail?: string;
+  createdTime?: string; // Add createdTime to interface
+  takenDate?: string; // Add takenDate field to interface
 }
 
 export default function Gallery() {
@@ -30,6 +32,15 @@ export default function Gallery() {
         
         const data = await response.json();
         console.log("Fetched gallery images:", data);
+        
+        // Debug: Log the first few images' dates to verify order
+        if (data.length > 0) {
+          console.log("Image dates (should be newest first):");
+          data.slice(0, 5).forEach((img: GalleryImage, i: number) => {
+            console.log(`${i+1}. ${img.title}: ${formatDate(img.createdTime)}`);
+          });
+        }
+        
         setImages(data);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load gallery images');
@@ -84,6 +95,17 @@ export default function Gallery() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [selectedImage, closeImage, navigateImage]);
 
+  // Format date for display
+  const formatDate = (dateString?: string): string => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { 
+      year: 'numeric', 
+      month: 'short', 
+      day: 'numeric' 
+    });
+  };
+
   if (loading) {
     return (
       <div className="container mx-auto px-4 py-16">
@@ -137,9 +159,14 @@ export default function Gallery() {
 
   return (
     <div className="container mx-auto px-4 py-16">
-      {/* Image Grid - Now with masonry-like effect */}
+      <div className="mb-6">
+        <h2 className="text-2xl font-bold mb-2">Gallery</h2>
+        <p className="text-gray-600">Images are sorted by date taken (newest first)</p>
+      </div>
+      
+      {/* Image Grid - Using responsive grid with preserved aspect ratios */}
       <motion.div 
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
         initial="hidden"
         animate="show"
         variants={{
@@ -155,7 +182,7 @@ export default function Gallery() {
         {images.map((img, index) => (
           <motion.div 
             key={img.id} 
-            className={`overflow-hidden rounded-2xl shadow-lg bg-transparent cursor-pointer ${index % 3 === 0 ? 'row-span-2' : ''}`}
+            className="overflow-hidden rounded-2xl shadow-lg bg-transparent cursor-pointer"
             onClick={() => openImage(img.src, index)}
             variants={{
               hidden: { opacity: 0, y: 20 },
@@ -170,20 +197,27 @@ export default function Gallery() {
               boxShadow: "0 8px 16px -2px rgba(255, 255, 255, 0.1), 0 4px 8px -2px rgba(255, 255, 255, 0.06)"
             }}
           >
-            <div className={`relative w-full ${index % 3 === 0 ? 'h-96 sm:h-[500px]' : 'h-64 sm:h-72'}`}>
-              <div 
-                className="w-full h-full bg-cover bg-center transition-all duration-500 grayscale hover:grayscale-0 rounded-2xl"
-                style={{ 
-                  backgroundImage: `url('${img.thumbnail || img.src}')`,
-                  filter: "drop-shadow(0 0 8px rgba(255, 255, 255, 0.2))"
-                }}
-                aria-label={img.alt}
+            <div className="relative w-full aspect-[3/4] group">
+              <img 
+                src={img.src || img.thumbnail}
+                alt={img.alt}
+                className="w-full h-full object-cover transition-all duration-500 rounded-2xl"
+                loading="lazy"
               />
-              {img.title && (
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 rounded-b-2xl">
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 rounded-b-2xl">
+                {img.title && (
                   <p className="text-white font-semibold">{img.title}</p>
-                </div>
-              )}
+                )}
+                {img.takenDate ? (
+                  <p className="text-white/75 text-sm mt-1">
+                    Taken {formatDate(img.takenDate)}
+                  </p>
+                ) : img.createdTime && (
+                  <p className="text-white/75 text-sm mt-1">
+                    Uploaded {formatDate(img.createdTime)}
+                  </p>
+                )}
+              </div>
             </div>
           </motion.div>
         ))}
@@ -191,7 +225,7 @@ export default function Gallery() {
 
       {/* Fullscreen Image Modal with navigation */}
       <AnimatePresence>
-        {selectedImage && (
+        {selectedImage && selectedImageIndex !== null && (
           <motion.div 
             className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-4 backdrop-blur-sm"
             onClick={closeImage}
@@ -200,16 +234,17 @@ export default function Gallery() {
             exit={{ opacity: 0 }}
           >
             <motion.div 
-              className="relative max-w-6xl max-h-[90vh] w-full h-full"
+              className="relative max-w-6xl max-h-[90vh] w-full flex items-center justify-center"
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               transition={{ type: "spring", damping: 25 }}
               onClick={(e) => e.stopPropagation()}
             >
-              <div 
-                className="w-full h-full bg-contain bg-center bg-no-repeat rounded-3xl"
-                style={{ backgroundImage: `url('${selectedImage}')` }}
+              <img 
+                src={selectedImage}
+                alt="Enlarged view"
+                className="max-w-full max-h-[85vh] object-contain rounded-3xl"
               />
               
               {/* Navigation buttons */}
@@ -256,9 +291,21 @@ export default function Gallery() {
                 </svg>
               </motion.button>
               
-              {/* Image counter */}
-              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full text-white text-sm">
-                {selectedImageIndex !== null ? `${selectedImageIndex + 1} / ${images.length}` : ''}
+              {/* Image info - counter and date */}
+              <div className="absolute bottom-4 left-0 right-0 flex justify-center items-center gap-4 flex-wrap">
+                <div className="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full text-white text-sm">
+                  {`${selectedImageIndex + 1} / ${images.length}`}
+                </div>
+                
+                {images[selectedImageIndex].takenDate ? (
+                  <div className="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full text-white text-sm">
+                    Taken {formatDate(images[selectedImageIndex].takenDate)}
+                  </div>
+                ) : images[selectedImageIndex].createdTime && (
+                  <div className="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full text-white text-sm">
+                    Uploaded {formatDate(images[selectedImageIndex].createdTime)}
+                  </div>
+                )}
               </div>
             </motion.div>
           </motion.div>

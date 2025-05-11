@@ -12,6 +12,7 @@
     "@react-three/drei": "^10.0.7",
     "@react-three/fiber": "^9.1.2",
     "dotenv": "^16.5.0",
+    "exif-parser": "^0.1.12",
     "framer-motion": "^12.10.5",
     "google-auth-library": "^9.15.1",
     "googleapis": "^148.0.0",
