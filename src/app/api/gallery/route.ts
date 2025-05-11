@@ -99,19 +99,6 @@ async function getImagesFromGoogleDrive(): Promise<GalleryImage[]> {
   }
 }
 
-// Map Google Photos media items to our gallery format
-function mapMediaItemsToGalleryImages(mediaItems: Record<string, unknown>[]): GalleryImage[] {
-  return mediaItems
-    .filter(item => typeof item.mimeType === 'string' && item.mimeType.startsWith('image/'))
-    .map(item => ({
-      id: item.id as string,
-      src: `${item.baseUrl}=w2048-h2048` as string, // Large size for display
-      alt: (item.filename as string) || 'Gallery image',
-      title: ((item.filename as string) || 'Untitled').replace(/\.[^/.]+$/, '') || 'Untitled', // Remove file extension
-      thumbnail: `${item.baseUrl}=w300-h300` as string, // Thumbnail
-    }));
-}
-
 export async function GET() {
   try {
     // First try to get images from Google Drive (using the folder ID from .env.local)
