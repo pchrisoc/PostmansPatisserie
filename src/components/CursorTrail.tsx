@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { motion } from 'framer-motion';
 
 interface MousePosition {
@@ -11,14 +11,13 @@ interface MousePosition {
 export default function CursorTrail() {
   const [mousePosition, setMousePosition] = useState<MousePosition | null>(null);
   const [cursorHistory, setCursorHistory] = useState<MousePosition[]>([]);
-  const [isClicking, setIsClicking] = useState(false);
   const [isMoving, setIsMoving] = useState(false);
   const historyLimit = 20; // More points for a longer trail
   const requestRef = useRef<number | undefined>(undefined);
   const previousTimeRef = useRef<number | undefined>(undefined);
   const moveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   
-  // Handle mouse move and click events
+  // Handle mouse move events
   useEffect(() => {
     const updateMousePosition = (e: MouseEvent) => {
       setMousePosition({ x: e.clientX, y: e.clientY });
@@ -35,17 +34,10 @@ export default function CursorTrail() {
       }, 100); // Adjust this value to change how quickly the trail dissipates
     };
     
-    const handleMouseDown = () => setIsClicking(true);
-    const handleMouseUp = () => setIsClicking(false);
-    
     window.addEventListener('mousemove', updateMousePosition);
-    window.addEventListener('mousedown', handleMouseDown);
-    window.addEventListener('mouseup', handleMouseUp);
     
     return () => {
       window.removeEventListener('mousemove', updateMousePosition);
-      window.removeEventListener('mousedown', handleMouseDown);
-      window.removeEventListener('mouseup', handleMouseUp);
       if (moveTimeoutRef.current) {
         clearTimeout(moveTimeoutRef.current);
       }
@@ -53,7 +45,7 @@ export default function CursorTrail() {
   }, []);
   
   // Animation loop with requestAnimationFrame for smoother trails
-  const animate = (time: number) => {
+  const animate = useCallback((time: number) => {
     if (previousTimeRef.current !== undefined && mousePosition !== null) {
       // Only update trail when mouse is moving
       if (isMoving) {
@@ -83,7 +75,7 @@ export default function CursorTrail() {
     
     previousTimeRef.current = time;
     requestRef.current = requestAnimationFrame(animate);
-  };
+  }, [mousePosition, isMoving, cursorHistory.length, historyLimit]);
   
   useEffect(() => {
     requestRef.current = requestAnimationFrame(animate);
@@ -92,7 +84,7 @@ export default function CursorTrail() {
         cancelAnimationFrame(requestRef.current);
       }
     };
-  }, [mousePosition, isMoving]);
+  }, [animate]);
   
   if (mousePosition === null) {
     return null;

@@ -79,13 +79,13 @@ export default function About() {
                 <li className="text-xl">
                     <span className="text-white">A name for that constituent of gluten which is insoluble in alcohol.</span>
                         <p className="text-gray-400 ml-6 mt-1 italic text-base">
-                            "Researchers isolated the zymome to study its effect on gluten-sensitive individuals."
+                            &ldquo;Researchers isolated the zymome to study its effect on gluten-sensitive individuals.&rdquo;
                         </p>
                 </li>
                 <li className="text-xl">
                     <span className="text-white">A celiac that is immune from alcoholic inebriation.</span>
                         <p className="text-gray-400 ml-6 mt-1 italic text-base">
-                        "Legend has it, the zymome could drink all night and still recite poetry without slurring."
+                        &ldquo;Legend has it, the zymome could drink all night and still recite poetry without slurring.&rdquo;
                         </p>
                 </li>
               </ol>

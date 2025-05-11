@@ -122,7 +122,7 @@ export default function Title() {
           animate={{ opacity: 1 }}
           transition={{ duration: 1, delay: 1 }}
         >
-          A celiac's refuge in the digital world.
+          A celiac&apos;s refuge in the digital world.
         </motion.p>
       </motion.div>
       
