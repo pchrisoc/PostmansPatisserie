@@ -20,14 +20,14 @@ export default function Home() {
       <About />
 
       {/* Gallery Section */}
-      <section id="gallery" className="py-16 px-4 md:px-8 bg-amber-50">
+      <section id="gallery" className="py-16 px-8 bg-amber-50">
         <div className="container mx-auto">
           <Gallery />
         </div>
       </section>
 
       {/* Order Section */}
-      <section id="order" className="py-16 px-4 md:px-8 bg-amber-100">
+      <section id="order" className="py-16 px-8 bg-amber-100">
         <div className="container mx-auto max-w-4xl">
           <div className="bg-white rounded-lg shadow-md p-8">
             <OrderForm />

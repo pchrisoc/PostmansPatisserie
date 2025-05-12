@@ -1,28 +1,17 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import { useScrollReveal } from '../hooks/useScrollReveal';
-
-// Define the type for our gallery items
-interface GalleryItem {
-  id: string;
-  src: string;
-  alt: string;
-  title: string;
-  description?: string;
-  thumbnail?: string;
-  createdTime?: string;
-  takenDate?: string;
-}
+import { useGallery } from '@/context/GalleryContext';
 
 // Define sort options
 type SortOption = 'newest' | 'oldest' | 'alphabetical';
 
 export default function Gallery() {
-  const [items, setItems] = useState<GalleryItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  // Use the shared gallery context instead of making direct API calls
+  const { items, loading, error, refetch } = useGallery();
+  
   const [sortBy, setSortBy] = useState<SortOption>('newest');
   const [activeItem, setActiveItem] = useState<string | null>(null);
 
@@ -33,7 +22,7 @@ export default function Gallery() {
   });
 
   // Sort function to handle different sorting options
-  const sortItems = (items: GalleryItem[], sortOption: SortOption): GalleryItem[] => {
+  const sortItems = (items: typeof items, sortOption: SortOption) => {
     return [...items].sort((a, b) => {
       if (sortOption === 'alphabetical') {
         return a.title.localeCompare(b.title);
@@ -63,31 +52,6 @@ export default function Gallery() {
     });
   };
 
-  useEffect(() => {
-    // Fetch gallery data from the API
-    const fetchGallery = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch('/api/gallery');
-        
-        if (!response.ok) {
-          throw new Error('Failed to fetch gallery images');
-        }
-        
-        const data = await response.json();
-        setItems(data);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'An unknown error occurred');
-        console.error('Gallery fetch error:', err);
-        
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchGallery();
-  }, []);
-
   // Sort items whenever sort option changes or items are loaded
   const sortedItems = sortItems(items, sortBy);
 
@@ -110,6 +74,12 @@ export default function Gallery() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
           Error loading gallery: {error}
+          <button 
+            onClick={() => refetch()} 
+            className="ml-3 bg-red-100 text-red-800 px-3 py-1 rounded-md hover:bg-red-200 transition-colors"
+          >
+            Retry
+          </button>
         </div>
       </div>
     );
@@ -134,8 +104,8 @@ export default function Gallery() {
       ref={galleryRef} 
       className={`transition-all duration-700 ${isRevealed ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
     >
-      <div className="mb-8 flex flex-col sm:flex-row sm:justify-between items-start sm:items-center">
-        <h2 className="text-2xl font-bold text-amber-800 mb-4 sm:mb-0 relative">
+      <div className="mb-8 flex flex-row justify-between items-center">
+        <h2 className="text-2xl font-bold text-amber-800 relative">
           Our Bread Gallery
           <span className="absolute bottom-0 left-0 w-1/2 h-1 bg-amber-400 transform origin-left scale-x-100"></span>
         </h2>
@@ -156,7 +126,7 @@ export default function Gallery() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-3 gap-8">
         {sortedItems.map((item, index) => (
           <div 
             key={item.id} 
@@ -176,7 +146,7 @@ export default function Gallery() {
                     src={item.src} 
                     alt={item.alt || item.title} 
                     fill
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    sizes="33vw"
                     className="object-cover transition-transform duration-700 group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-amber-900/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-start p-4">

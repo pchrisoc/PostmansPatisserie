@@ -104,12 +104,12 @@ export default function OrderForm() {
             </div>
           )}
           
-          <form onSubmit={handleSubmit} className="space-y-6 bg-white rounded-xl shadow-md p-6 md:p-8 border border-amber-100 relative">
+          <form onSubmit={handleSubmit} className="space-y-6 bg-white rounded-xl shadow-md p-8 border border-amber-100 relative">
             {/* Decorative elements */}
             <div className="absolute -top-4 -right-4 w-12 h-12 bg-amber-400 rounded-full opacity-20"></div>
             <div className="absolute -bottom-6 -left-6 w-16 h-16 bg-amber-500 rounded-full opacity-10"></div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-2 gap-6">
               <div className="form-group">
                 <label htmlFor={`${formId}-name`} className="block text-stone-700 font-medium mb-2 transition-colors duration-200">Name</label>
                 <div className="relative">
@@ -182,7 +182,7 @@ export default function OrderForm() {
             <div className="mt-8">
               <button 
                 type="submit" 
-                className={`group relative overflow-hidden bg-amber-700 hover:bg-amber-800 text-white py-3 px-8 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg transform hover:translate-y-[-2px] w-full md:w-auto ${
+                className={`group relative overflow-hidden bg-amber-700 hover:bg-amber-800 text-white py-3 px-8 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg transform hover:translate-y-[-2px] w-auto ${
                   isSubmitting ? 'opacity-70 cursor-not-allowed' : ''
                 }`}
                 disabled={isSubmitting}

@@ -12,15 +12,15 @@ export default function About() {
   });
   
   return (
-    <section id="about" className="py-16 px-4 md:px-8 bg-white overflow-hidden">
+    <section id="about" className="py-16 px-8 bg-white overflow-hidden">
       <div 
         ref={aboutRef}
         className="container mx-auto transition-all duration-700"
       >
-        <div className="flex flex-col md:flex-row items-start gap-8 max-w-5xl mx-auto">
+        <div className="flex flex-row items-start gap-8 max-w-5xl mx-auto">
           {/* Left circular image - slides in from left */}
           <div 
-            className={`md:w-1/3 flex justify-center md:justify-start transition-all duration-1000 transform ${
+            className={`w-1/3 flex justify-start transition-all duration-1000 transform ${
               isRevealed ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-24'
             }`}
             style={{ transitionDelay: '200ms' }}
@@ -30,7 +30,7 @@ export default function About() {
                 src="/kian.jpeg"
                 alt="Our bakery"
                 fill
-                sizes="(max-width: 768px) 100vw, 288px"
+                sizes="288px"
                 className="object-cover"
               />
               {/* Decorative elements */}
@@ -41,12 +41,12 @@ export default function About() {
           
           {/* Right content: title and text - slides in from right */}
           <div 
-            className={`md:w-2/3 transition-all duration-1000 transform ${
+            className={`w-2/3 transition-all duration-1000 transform ${
               isRevealed ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-24'
             }`}
             style={{ transitionDelay: '400ms' }}
           >
-            <h2 className="text-3xl font-bold text-amber-800 mb-6 text-center md:text-left relative inline-block">
+            <h2 className="text-3xl font-bold text-amber-800 mb-6 text-left relative inline-block">
               Our Story
               <span className={`absolute bottom-0 left-0 h-1 bg-amber-400 transform origin-left transition-all duration-1000 ${
                 isRevealed ? 'w-1/2' : 'w-0'

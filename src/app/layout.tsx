@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { GalleryProvider } from "@/context/GalleryContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,7 +29,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-amber-50 text-stone-800`}
       >
-        {children}
+        <GalleryProvider>
+          {children}
+        </GalleryProvider>
       </body>
     </html>
   );
