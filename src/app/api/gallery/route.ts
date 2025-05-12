@@ -19,7 +19,7 @@ interface GalleryImage {
 const CACHE = {
   data: null as GalleryImage[] | null,
   lastFetched: 0,  // timestamp when data was last fetched
-  expiryMs: 5 * 60 * 1000  // 5 minutes cache expiry
+  expiryMs: 1 * 60 * 1000  // 1 minute cache expiry (reduced for more frequent updates)
 };
 
 // Initialize the OAuth2 client with credentials from .env.local
@@ -89,6 +89,8 @@ async function getImagesFromGoogleDrive(): Promise<GalleryImage[]> {
       throw new Error('Missing Google Drive folder ID configuration');
     }
     
+    console.log(`[Gallery API] Using Google Drive Folder ID: ${folderId}`);
+    
     // Query files from the specified folder
     // Only get image files (JPEG, PNG, GIF, etc.)
     const response = await drive.files.list({
@@ -128,10 +130,11 @@ async function getImagesFromGoogleDrive(): Promise<GalleryImage[]> {
             },
           });
           
-          // Create browser-compatible direct links
+          // Create browser-compatible direct links with cache busting
           // This format is more reliable for browser display: https://drive.google.com/thumbnail?id=FILE_ID&sz=w2048
-          const directUrl = `https://drive.google.com/thumbnail?id=${file.id}&sz=w2048`;
-          const thumbnailUrl = `https://drive.google.com/thumbnail?id=${file.id}&sz=w300`;
+          const timestamp = Date.now();
+          const directUrl = `https://drive.google.com/thumbnail?id=${file.id}&sz=w2048&t=${timestamp}`;
+          const thumbnailUrl = `https://drive.google.com/thumbnail?id=${file.id}&sz=w300&t=${timestamp}`;
           
           // Try to extract EXIF data to get the date the photo was taken
           const exifDate = file.mimeType?.includes('jpeg') || file.mimeType?.includes('jpg') 
@@ -178,11 +181,26 @@ export async function GET(request: Request) {
     CACHE.data.length > 0 && 
     (now - CACHE.lastFetched) < CACHE.expiryMs;
   
+  // Log request details
+  console.log(`[Gallery API] Request received at ${new Date().toISOString()}`);
+  console.log(`[Gallery API] Request URL: ${request.url}`);
+  console.log(`[Gallery API] Force fresh: ${forceFresh}`);
+  console.log(`[Gallery API] Cache status: ${isCacheValid ? 'valid' : 'invalid or expired'}`);
+  
   // Use cache if it's valid and we're not forcing a refresh
   if (isCacheValid && !forceFresh) {
     // TypeScript safety: we've already checked CACHE.data is not null above
     console.log(`[CACHE HIT] Returning ${CACHE.data!.length} images from cache (expires in ${Math.round((CACHE.expiryMs - (now - CACHE.lastFetched)) / 1000)}s)`);
-    return NextResponse.json(CACHE.data);
+    
+    // Return cached data with cache control headers
+    return new NextResponse(JSON.stringify(CACHE.data), {
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0',
+      },
+    });
   }
   
   // If cache is invalid or we're forcing a refresh, fetch fresh data
@@ -228,5 +246,13 @@ export async function GET(request: Request) {
     CACHE.lastFetched = now;
   }
   
-  return NextResponse.json(images);
+  // Return the data with cache control headers
+  return new NextResponse(JSON.stringify(images), {
+    headers: {
+      'Content-Type': 'application/json',
+      'Cache-Control': 'no-cache, no-store, must-revalidate',
+      'Pragma': 'no-cache',
+      'Expires': '0',
+    },
+  });
 }

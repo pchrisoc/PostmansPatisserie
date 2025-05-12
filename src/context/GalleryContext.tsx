@@ -39,8 +39,8 @@ let globalCache: {
   timestamp: number;
 } | null = null;
 
-// Cache expiry time (5 minutes)
-const CACHE_EXPIRY_MS = 5 * 60 * 1000;
+// Cache expiry time (1 minute - shortened to ensure more frequent updates)
+const CACHE_EXPIRY_MS = 1 * 60 * 1000;
 
 // Helper to get the absolute URL for API requests
 function getApiUrl(path: string): string {
@@ -85,15 +85,18 @@ export function GalleryProvider({ children }: { children: ReactNode }) {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
       
-      const apiUrl = getApiUrl('/api/gallery');
+      // Add a cache busting timestamp to ensure we get fresh data from the server
+      const timestamp = Date.now();
+      const apiUrl = getApiUrl(`/api/gallery?t=${timestamp}&fresh=true`);
       console.log(`[GalleryContext] Fetching from: ${apiUrl}`);
       
       const response = await fetch(apiUrl, {
-        // Add cache busting for forced refreshes
-        headers: force ? {
-          'Cache-Control': 'no-cache',
-          'Pragma': 'no-cache'
-        } : {},
+        // Add cache busting for all requests to ensure we get fresh data
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0'
+        },
         signal: controller.signal
       });
       
@@ -109,6 +112,9 @@ export function GalleryProvider({ children }: { children: ReactNode }) {
         console.error('[GalleryContext] API returned non-array data:', data);
         throw new Error('Invalid data format received from API');
       }
+      
+      // Log the data received for debugging
+      console.log(`[GalleryContext] Received ${data.length} images from API`);
       
       // Update the global cache
       globalCache = {
@@ -138,10 +144,17 @@ export function GalleryProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  // Fetch data on initial mount only if we don't have cached data
+  // Fetch data on initial mount
   useEffect(() => {
-    fetchGallery();
-    // Empty dependency array ensures this only runs once when the component mounts
+    fetchGallery(true); // Force fetch on component mount to ensure fresh data
+    
+    // Set up an interval to refresh the data periodically
+    const refreshInterval = setInterval(() => {
+      console.log('[GalleryContext] Periodic refresh triggered');
+      fetchGallery(true);
+    }, CACHE_EXPIRY_MS * 2); // Refresh twice as often as the cache expiry
+    
+    return () => clearInterval(refreshInterval);
   }, []);
 
   return (
