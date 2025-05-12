@@ -44,15 +44,13 @@ const CACHE_EXPIRY_MS = 5 * 60 * 1000;
 
 // Helper to get the absolute URL for API requests
 function getApiUrl(path: string): string {
-  // In the browser, we can use relative URLs
+  // For client-side, we can use relative URLs and just return the path
   if (typeof window !== 'undefined') {
     return path;
   }
   
-  // For server-side rendering, construct the full URL
-  // This handles cases where Next.js might be hosted on a subdirectory
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 
-                 (typeof window !== 'undefined' ? window.location.origin : '');
+  // For server-side rendering, use the environment variable if available
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || '';
   return `${baseUrl}${path}`;
 }
 
