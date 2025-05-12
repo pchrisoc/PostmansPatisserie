@@ -3,9 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 
-interface NavigationProps {}
-
-export default function Navigation({}: NavigationProps) {
+export default function Navigation() {
   return (
     <nav className="flex items-center gap-2">
       <ul className="flex gap-8">
