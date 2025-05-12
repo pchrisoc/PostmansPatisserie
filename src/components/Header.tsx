@@ -81,7 +81,7 @@ export default function Header({ breadOfTheWeek }: HeaderProps) {
           ${scrolled ? 'shadow-lg py-2' : 'py-4'} 
           ${headerVisible ? 'transform-none' : 'transform -translate-y-full'}`}
       >
-        <div className="container mx-auto flex justify-between items-center px-4">
+        <div className="container mx-auto flex justify-between items-center px-0">
           <div className="flex items-center">
             <h1 className={`font-bold transform transition-transform duration-300 hover:scale-105 ${isMobile ? 'text-xl' : 'text-3xl'}`}>
               Postman Patisserie
