@@ -42,6 +42,20 @@ let globalCache: {
 // Cache expiry time (5 minutes)
 const CACHE_EXPIRY_MS = 5 * 60 * 1000;
 
+// Helper to get the absolute URL for API requests
+function getApiUrl(path: string): string {
+  // In the browser, we can use relative URLs
+  if (typeof window !== 'undefined') {
+    return path;
+  }
+  
+  // For server-side rendering, construct the full URL
+  // This handles cases where Next.js might be hosted on a subdirectory
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 
+                 (typeof window !== 'undefined' ? window.location.origin : '');
+  return `${baseUrl}${path}`;
+}
+
 // Provider component
 export function GalleryProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<GalleryItem[]>(() => globalCache?.items || []);
@@ -69,19 +83,34 @@ export function GalleryProvider({ children }: { children: ReactNode }) {
       setLoading(true);
       console.log('[GalleryContext] Fetching gallery data from API');
       
-      const response = await fetch('/api/gallery', {
+      // Add a timeout to the fetch to prevent hanging requests
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+      
+      const apiUrl = getApiUrl('/api/gallery');
+      console.log(`[GalleryContext] Fetching from: ${apiUrl}`);
+      
+      const response = await fetch(apiUrl, {
         // Add cache busting for forced refreshes
         headers: force ? {
           'Cache-Control': 'no-cache',
           'Pragma': 'no-cache'
-        } : {}
+        } : {},
+        signal: controller.signal
       });
       
+      clearTimeout(timeoutId);
+      
       if (!response.ok) {
-        throw new Error('Failed to fetch gallery images');
+        throw new Error(`Failed to fetch gallery images: ${response.status} ${response.statusText}`);
       }
       
       const data = await response.json();
+      
+      if (!Array.isArray(data)) {
+        console.error('[GalleryContext] API returned non-array data:', data);
+        throw new Error('Invalid data format received from API');
+      }
       
       // Update the global cache
       globalCache = {
@@ -93,8 +122,19 @@ export function GalleryProvider({ children }: { children: ReactNode }) {
       setLastFetched(Date.now());
       setError(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An unknown error occurred');
+      // Check for specific error types
+      if (err instanceof DOMException && err.name === 'AbortError') {
+        setError('Request timed out. Please try again.');
+      } else {
+        setError(err instanceof Error ? err.message : 'An unknown error occurred');
+      }
       console.error('[GalleryContext] Gallery fetch error:', err);
+      
+      // If we have cached items, use them even if the refresh failed
+      if (globalCache?.items?.length) {
+        console.log('[GalleryContext] Using cached items despite fetch error');
+        setItems(globalCache.items);
+      }
     } finally {
       setLoading(false);
     }

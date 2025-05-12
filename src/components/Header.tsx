@@ -15,7 +15,7 @@ interface HeaderProps {
 
 export default function Header({ breadOfTheWeek }: HeaderProps) {
   // Use the shared gallery context instead of making a direct API call
-  const { items, loading } = useGallery();
+  const { items, loading, error, refetch } = useGallery();
   
   const [latestImage, setLatestImage] = useState<typeof items[0] | null>(null);
   const [scrolled, setScrolled] = useState(false);
@@ -112,6 +112,17 @@ export default function Header({ breadOfTheWeek }: HeaderProps) {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
                 </svg>
               </a>
+              
+              {/* Add error retry button if there's an error */}
+              {error && (
+                <button
+                  onClick={() => refetch()}
+                  className="ml-4 bg-amber-600 hover:bg-amber-700 text-white py-2 px-4 rounded-md text-sm transition-colors"
+                  title="Retry loading gallery images"
+                >
+                  Retry
+                </button>
+              )}
             </div>
           </div>
           <div className="w-1/2 relative h-96 w-full rounded-xl overflow-hidden shadow-2xl transform transition-all duration-700 hover:scale-[1.02] hover:rotate-1">
@@ -123,6 +134,11 @@ export default function Header({ breadOfTheWeek }: HeaderProps) {
                 sizes="50vw"
                 className="object-cover"
                 priority
+                onError={(e) => {
+                  console.error('Image failed to load:', latestImage.src);
+                  // Fallback to default content on image load error
+                  e.currentTarget.style.display = 'none';
+                }}
               />
             ) : (
               <div className="absolute inset-0 bg-amber-300 flex items-center justify-center">
@@ -130,6 +146,17 @@ export default function Header({ breadOfTheWeek }: HeaderProps) {
                   <div className="animate-pulse flex flex-col items-center">
                     <div className="h-12 w-12 border-4 border-amber-800 border-t-transparent rounded-full animate-spin"></div>
                     <p className="text-amber-800 text-xl font-bold mt-4">Loading image...</p>
+                  </div>
+                ) : error ? (
+                  <div className="text-center p-6">
+                    <p className="text-amber-900 text-lg font-bold mb-2">Could not load gallery</p>
+                    <p className="text-amber-800 text-sm mb-4">{error}</p>
+                    <button 
+                      onClick={() => refetch()}
+                      className="bg-amber-700 hover:bg-amber-800 text-white py-2 px-4 rounded-md transition-colors"
+                    >
+                      Try Again
+                    </button>
                   </div>
                 ) : (
                   <p className="text-amber-800 text-xl font-bold">{breadOfTheWeek.name}</p>

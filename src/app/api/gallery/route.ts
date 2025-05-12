@@ -14,6 +14,14 @@ interface GalleryImage {
   takenDate?: string; // Add date when photo was taken from EXIF
 }
 
+// Server-side cache with expiration management
+// This global variable persists between API calls since the server stays alive
+const CACHE = {
+  data: null as GalleryImage[] | null,
+  lastFetched: 0,  // timestamp when data was last fetched
+  expiryMs: 5 * 60 * 1000  // 5 minutes cache expiry
+};
+
 // Initialize the OAuth2 client with credentials from .env.local
 const getAuthClient = () => {
   const oauth2Client = new google.auth.OAuth2(
@@ -158,50 +166,67 @@ async function getImagesFromGoogleDrive(): Promise<GalleryImage[]> {
   }
 }
 
-export async function GET() {
-  try {
-    // First try to get images from Google Drive (using the folder ID from .env.local)
-    const images = await getImagesFromGoogleDrive();
-    
-    if (images.length === 0) {
-      console.log('No images found in Google Drive. Please check your folder ID and permissions.');
-    } else {
-      console.log(`Returning ${images.length} images to the gallery`);
-      
-      // Sort images by date taken (newest first)
-      // If takenDate is not available, fall back to createdTime, then sort alphabetically as last resort
-      images.sort((a, b) => {
-        // If both have takenDate, sort by that
-        if (a.takenDate && b.takenDate) {
-          return new Date(b.takenDate).getTime() - new Date(a.takenDate).getTime();
-        }
-        
-        // If only one has takenDate, prefer the one with takenDate
-        if (a.takenDate) return -1;
-        if (b.takenDate) return 1;
-        
-        // If neither has takenDate, fall back to createdTime
-        if (a.createdTime && b.createdTime) {
-          return new Date(b.createdTime).getTime() - new Date(a.createdTime).getTime();
-        }
-        
-        // Last resort: alphabetical sorting
-        return a.title.localeCompare(b.title);
-      });
-      
-      // Log the sorted results
-      console.log('Photos sorted by date taken (newest first):');
-      images.slice(0, 5).forEach(img => {
-        console.log(`${img.title}: Taken ${img.takenDate || 'Unknown'}, Uploaded ${img.createdTime}`);
-      });
-    }
-    
-    return NextResponse.json(images);
-  } catch (error) {
-    console.error('Error in Gallery API:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch images', details: error instanceof Error ? error.message : 'Unknown error' },
-      { status: 500 }
-    );
+export async function GET(request: Request) {
+  // Add request headers to URL for cache busting
+  const url = new URL(request.url);
+  const forceFresh = url.searchParams.get('fresh') === 'true';
+  
+  // Check if we have valid cached data
+  const now = Date.now();
+  const isCacheValid = 
+    CACHE.data !== null && 
+    CACHE.data.length > 0 && 
+    (now - CACHE.lastFetched) < CACHE.expiryMs;
+  
+  // Use cache if it's valid and we're not forcing a refresh
+  if (isCacheValid && !forceFresh) {
+    // TypeScript safety: we've already checked CACHE.data is not null above
+    console.log(`[CACHE HIT] Returning ${CACHE.data!.length} images from cache (expires in ${Math.round((CACHE.expiryMs - (now - CACHE.lastFetched)) / 1000)}s)`);
+    return NextResponse.json(CACHE.data);
   }
+  
+  // If cache is invalid or we're forcing a refresh, fetch fresh data
+  console.log(`[CACHE MISS] ${forceFresh ? 'Force refresh requested' : 'Cache expired or empty'}, fetching fresh gallery data`);
+  
+  // Get images from Google Drive
+  const images = await getImagesFromGoogleDrive();
+  
+  if (images.length === 0) {
+    console.log('No images found in Google Drive. Please check your folder ID and permissions.');
+  } else {
+    console.log(`Returning ${images.length} images to the gallery`);
+    
+    // Sort images by date taken (newest first)
+    // If takenDate is not available, fall back to createdTime, then sort alphabetically as last resort
+    images.sort((a, b) => {
+      // If both have takenDate, sort by that
+      if (a.takenDate && b.takenDate) {
+        return new Date(b.takenDate).getTime() - new Date(a.takenDate).getTime();
+      }
+      
+      // If only one has takenDate, prefer the one with takenDate
+      if (a.takenDate) return -1;
+      if (b.takenDate) return 1;
+      
+      // If neither has takenDate, fall back to createdTime
+      if (a.createdTime && b.createdTime) {
+        return new Date(b.createdTime).getTime() - new Date(a.createdTime).getTime();
+      }
+      
+      // Last resort: alphabetical sorting
+      return a.title.localeCompare(b.title);
+    });
+    
+    // Log the sorted results
+    console.log('Photos sorted by date taken (newest first):');
+    images.slice(0, 5).forEach(img => {
+      console.log(`${img.title}: Taken ${img.takenDate || 'Unknown'}, Uploaded ${img.createdTime}`);
+    });
+    
+    // Update the cache
+    CACHE.data = images;
+    CACHE.lastFetched = now;
+  }
+  
+  return NextResponse.json(images);
 }

@@ -8,6 +8,18 @@ import { useGallery } from '@/context/GalleryContext';
 // Define sort options
 type SortOption = 'newest' | 'oldest' | 'alphabetical';
 
+// Define the gallery item type to avoid circular reference
+type GalleryItem = {
+  id: string;
+  src: string;
+  alt: string;
+  title: string;
+  description?: string;
+  thumbnail?: string;
+  createdTime?: string;
+  takenDate?: string;
+};
+
 export default function Gallery() {
   // Use the shared gallery context instead of making direct API calls
   const { items, loading, error, refetch } = useGallery();
@@ -22,8 +34,8 @@ export default function Gallery() {
   });
 
   // Sort function to handle different sorting options
-  const sortItems = (items: typeof items, sortOption: SortOption) => {
-    return [...items].sort((a, b) => {
+  const sortItems = (galleryItems: GalleryItem[], sortOption: SortOption) => {
+    return [...galleryItems].sort((a, b) => {
       if (sortOption === 'alphabetical') {
         return a.title.localeCompare(b.title);
       }
