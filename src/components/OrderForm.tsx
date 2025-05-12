@@ -2,6 +2,7 @@
 
 import React, { useState, FormEvent, useId } from 'react';
 import { useScrollReveal } from '../hooks/useScrollReveal';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 
 export default function OrderForm() {
   // Use a stable ID for form elements
@@ -12,6 +13,9 @@ export default function OrderForm() {
     threshold: 0.1,
     triggerOnce: true
   });
+
+  // Add media query for responsive design
+  const isMobile = useMediaQuery('(max-width: 768px)');
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -104,12 +108,12 @@ export default function OrderForm() {
             </div>
           )}
           
-          <form onSubmit={handleSubmit} className="space-y-6 bg-white rounded-xl shadow-md p-8 border border-amber-100 relative">
+          <form onSubmit={handleSubmit} className="space-y-6 bg-white rounded-xl shadow-md p-4 md:p-8 border border-amber-100 relative">
             {/* Decorative elements */}
             <div className="absolute -top-4 -right-4 w-12 h-12 bg-amber-400 rounded-full opacity-20"></div>
             <div className="absolute -bottom-6 -left-6 w-16 h-16 bg-amber-500 rounded-full opacity-10"></div>
             
-            <div className="grid grid-cols-2 gap-6">
+            <div className={`grid ${isMobile ? 'grid-cols-1' : 'grid-cols-2'} gap-6`}>
               <div className="form-group">
                 <label htmlFor={`${formId}-name`} className="block text-stone-700 font-medium mb-2 transition-colors duration-200">Name</label>
                 <div className="relative">
@@ -179,10 +183,12 @@ export default function OrderForm() {
               <p className="text-xs text-stone-500 mt-2">Please include quantity, type of bread, and preferred pickup date</p>
             </div>
             
-            <div className="mt-8">
+            <div className={`mt-8 ${isMobile ? 'text-center' : ''}`}>
               <button 
                 type="submit" 
-                className={`group relative overflow-hidden bg-amber-700 hover:bg-amber-800 text-white py-3 px-8 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg transform hover:translate-y-[-2px] w-auto ${
+                className={`group relative overflow-hidden bg-amber-700 hover:bg-amber-800 text-white py-3 px-8 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg transform hover:translate-y-[-2px] ${
+                  isMobile ? 'w-full' : 'w-auto'
+                } ${
                   isSubmitting ? 'opacity-70 cursor-not-allowed' : ''
                 }`}
                 disabled={isSubmitting}
@@ -210,8 +216,8 @@ export default function OrderForm() {
             </div>
           </form>
           
-          <div className="mt-8 bg-amber-50 p-6 rounded-lg border border-amber-100 flex items-start space-x-4 animate-slide-in">
-            <div className="text-amber-600">
+          <div className="mt-8 bg-amber-50 p-4 md:p-6 rounded-lg border border-amber-100 flex flex-col md:flex-row items-start md:space-x-4 animate-slide-in">
+            <div className="text-amber-600 mb-2 md:mb-0">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>

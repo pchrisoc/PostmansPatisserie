@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import { useScrollReveal } from '../hooks/useScrollReveal';
 import { useGallery } from '@/context/GalleryContext';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 
 // Define sort options
 type SortOption = 'newest' | 'oldest' | 'alphabetical';
@@ -26,6 +27,10 @@ export default function Gallery() {
   
   const [sortBy, setSortBy] = useState<SortOption>('newest');
   const [activeItem, setActiveItem] = useState<string | null>(null);
+  
+  // Add media query for responsive design
+  const isMobile = useMediaQuery('(max-width: 768px)');
+  const isTablet = useMediaQuery('(min-width: 769px) and (max-width: 1024px)');
 
   // Use scroll reveal hook
   const { ref: galleryRef, isRevealed } = useScrollReveal({ 
@@ -111,12 +116,15 @@ export default function Gallery() {
     );
   }
 
+  // Determine grid columns based on screen size
+  const gridCols = isMobile ? 'grid-cols-1' : isTablet ? 'grid-cols-2' : 'grid-cols-3';
+
   return (
     <div 
       ref={galleryRef} 
       className={`transition-all duration-700 ${isRevealed ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
     >
-      <div className="mb-8 flex flex-row justify-between items-center">
+      <div className={`mb-8 ${isMobile ? 'flex flex-col gap-4' : 'flex flex-row justify-between'} items-center`}>
         <h2 className="text-2xl font-bold text-amber-800 relative">
           Our Bread Gallery
           <span className="absolute bottom-0 left-0 w-1/2 h-1 bg-amber-400 transform origin-left scale-x-100"></span>
@@ -138,7 +146,7 @@ export default function Gallery() {
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-8">
+      <div className={`grid ${gridCols} gap-4 md:gap-6 lg:gap-8`}>
         {sortedItems.map((item, index) => (
           <div 
             key={item.id} 
@@ -158,7 +166,7 @@ export default function Gallery() {
                     src={item.src} 
                     alt={item.alt || item.title} 
                     fill
-                    sizes="33vw"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                     className="object-cover transition-transform duration-700 group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-amber-900/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-start p-4">

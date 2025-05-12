@@ -3,6 +3,7 @@
 import React from 'react';
 import Image from 'next/image';
 import { useScrollReveal } from '../hooks/useScrollReveal';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 
 export default function About() {
   // Use the scroll reveal hook for animation
@@ -11,26 +12,29 @@ export default function About() {
     triggerOnce: true
   });
   
+  // Media query for responsive design
+  const isMobile = useMediaQuery('(max-width: 768px)');
+  
   return (
-    <section id="about" className="py-16 px-8 bg-white overflow-hidden">
+    <section id="about" className="py-16 px-4 md:px-8 bg-white overflow-hidden">
       <div 
         ref={aboutRef}
         className="container mx-auto transition-all duration-700"
       >
-        <div className="flex flex-row items-start gap-8 max-w-5xl mx-auto">
-          {/* Left circular image - slides in from left */}
+        <div className={`flex ${isMobile ? 'flex-col items-center' : 'flex-row items-start'} gap-8 max-w-5xl mx-auto`}>
+          {/* Image - centered on mobile, left on desktop */}
           <div 
-            className={`w-1/3 flex justify-start transition-all duration-1000 transform ${
+            className={`${isMobile ? 'w-full flex justify-center mb-8' : 'w-1/3 flex justify-start'} transition-all duration-1000 transform ${
               isRevealed ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-24'
             }`}
             style={{ transitionDelay: '200ms' }}
           >
-            <div className="relative h-72 w-72 rounded-full overflow-hidden shadow-md transform transition-all duration-500 hover:scale-105 hover:shadow-lg">
+            <div className={`relative ${isMobile ? 'h-56 w-56' : 'h-72 w-72'} rounded-full overflow-hidden shadow-md transform transition-all duration-500 hover:scale-105 hover:shadow-lg`}>
               <Image
                 src="/kian.jpeg"
                 alt="Our bakery"
                 fill
-                sizes="288px"
+                sizes="(max-width: 768px) 224px, 288px"
                 className="object-cover"
               />
               {/* Decorative elements */}
@@ -39,14 +43,14 @@ export default function About() {
             </div>
           </div>
           
-          {/* Right content: title and text - slides in from right */}
+          {/* Content: title and text - centered on mobile, right-aligned on desktop */}
           <div 
-            className={`w-2/3 transition-all duration-1000 transform ${
+            className={`${isMobile ? 'w-full text-center' : 'w-2/3 text-left'} transition-all duration-1000 transform ${
               isRevealed ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-24'
             }`}
             style={{ transitionDelay: '400ms' }}
           >
-            <h2 className="text-3xl font-bold text-amber-800 mb-6 text-left relative inline-block">
+            <h2 className={`text-3xl font-bold text-amber-800 mb-6 ${isMobile ? 'text-center' : 'text-left'} relative inline-block`}>
               Our Story
               <span className={`absolute bottom-0 left-0 h-1 bg-amber-400 transform origin-left transition-all duration-1000 ${
                 isRevealed ? 'w-1/2' : 'w-0'

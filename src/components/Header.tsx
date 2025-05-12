@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Navigation from './Navigation';
 import { useGallery } from '@/context/GalleryContext';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 
 interface BreadOfTheWeek {
   name: string;
@@ -21,6 +22,9 @@ export default function Header({ breadOfTheWeek }: HeaderProps) {
   const [scrolled, setScrolled] = useState(false);
   const [headerVisible, setHeaderVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
+  
+  // Add media query for mobile responsiveness
+  const isMobile = useMediaQuery('(max-width: 768px)');
 
   // Update latestImage when gallery items change
   useEffect(() => {
@@ -77,9 +81,9 @@ export default function Header({ breadOfTheWeek }: HeaderProps) {
           ${scrolled ? 'shadow-lg py-2' : 'py-4'} 
           ${headerVisible ? 'transform-none' : 'transform -translate-y-full'}`}
       >
-        <div className="container mx-auto flex justify-between items-center px-0">
+        <div className="container mx-auto flex justify-between items-center px-4">
           <div className="flex items-center">
-            <h1 className="text-3xl font-bold transform transition-transform duration-300 hover:scale-105">
+            <h1 className={`font-bold transform transition-transform duration-300 hover:scale-105 ${isMobile ? 'text-xl' : 'text-3xl'}`}>
               Postman Patisserie
             </h1>
           </div>
@@ -92,15 +96,15 @@ export default function Header({ breadOfTheWeek }: HeaderProps) {
       <div className={`h-20 ${scrolled ? 'h-16' : ''} bg-amber-800`}></div>
 
       {/* Hero with Bread of the Week - remove top padding */}
-      <section className="bg-gradient-to-b from-amber-800 to-amber-100 py-16 pt-0 px-8 overflow-hidden">
-        <div className="container mx-auto flex flex-row items-center gap-8">
-          <div className="w-1/2 transform transition-all duration-700 hover:translate-x-3">
+      <section className="bg-gradient-to-b from-amber-800 to-amber-100 py-16 pt-0 px-4 md:px-8 overflow-hidden">
+        <div className="container mx-auto flex flex-col md:flex-row items-center gap-8">
+          <div className={`${isMobile ? 'w-full text-center' : 'w-1/2'} transform transition-all duration-700 hover:translate-x-3`}>
             <div className="relative">
               <h2 className="text-xl font-bold text-amber-100 mb-2 relative inline-block">
                 Bread of the Week
                 <span className="absolute bottom-0 left-0 w-full h-1 bg-amber-400 transform origin-left scale-x-0 transition-transform duration-300 group-hover:scale-x-100"></span>
               </h2>
-              <h3 className="text-8xl font-bold text-amber-200 mb-6 leading-tight">
+              <h3 className={`font-bold text-amber-200 mb-6 leading-tight ${isMobile ? 'text-5xl' : 'text-8xl'}`}>
                 {latestImage ? latestImage.title : breadOfTheWeek.name}
               </h3>
               <a 
@@ -125,13 +129,13 @@ export default function Header({ breadOfTheWeek }: HeaderProps) {
               )}
             </div>
           </div>
-          <div className="w-1/2 relative h-96 w-full rounded-xl overflow-hidden shadow-2xl transform transition-all duration-700 hover:scale-[1.02] hover:rotate-1">
+          <div className={`${isMobile ? 'w-full mt-8' : 'w-1/2'} relative h-80 md:h-96 rounded-xl overflow-hidden shadow-2xl transform transition-all duration-700 hover:scale-[1.02] hover:rotate-1`}>
             {latestImage && latestImage.src ? (
               <Image 
                 src={latestImage.src} 
                 alt={latestImage.alt || (latestImage.title ? latestImage.title : breadOfTheWeek.name)}
                 fill
-                sizes="50vw"
+                sizes="(max-width: 768px) 100vw, 50vw"
                 className="object-cover"
                 priority
                 onError={(e) => {
