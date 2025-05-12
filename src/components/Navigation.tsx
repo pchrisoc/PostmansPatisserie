@@ -49,15 +49,6 @@ export default function Navigation() {
                 Gallery
               </Link>
             </li>
-            <li>
-              <Link 
-                href="/#order" 
-                onClick={() => setMobileMenuOpen(false)}
-                className="block px-4 py-2 text-amber-50 hover:bg-amber-700"
-              >
-                Order
-              </Link>
-            </li>
             <li className="border-t border-amber-700 mt-2 pt-2">
               <Link 
                 href="/#order" 
@@ -96,16 +87,6 @@ export default function Navigation() {
             className="relative overflow-hidden group py-1"
           >
             <span className="relative z-10 transition-colors group-hover:text-white">Gallery</span>
-            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-amber-200 group-hover:w-full transition-all duration-300"></span>
-            <span className="absolute bottom-0 left-0 w-0 h-full bg-amber-600 -z-1 group-hover:w-full transition-all duration-300 opacity-0 group-hover:opacity-20"></span>
-          </Link>
-        </li>
-        <li>
-          <Link 
-            href="/#order" 
-            className="relative overflow-hidden group py-1"
-          >
-            <span className="relative z-10 transition-colors group-hover:text-white">Order</span>
             <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-amber-200 group-hover:w-full transition-all duration-300"></span>
             <span className="absolute bottom-0 left-0 w-0 h-full bg-amber-600 -z-1 group-hover:w-full transition-all duration-300 opacity-0 group-hover:opacity-20"></span>
           </Link>
